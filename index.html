@@ -13,7 +13,8 @@
   button.sec,label.btn.sec{background:#333}
   input[type=file]{display:none}
   #game{position:fixed;top:0;left:0;width:100vw;height:100vh;height:100dvh;display:none;background:#000;overflow:hidden}
-  #game>div,#game .ejs_parent{width:100%!important;height:100%!important}
+  #ejs{position:absolute;top:0;left:0;width:100%;height:100%;display:block!important}
+  #ejs>div,#ejs .ejs_parent{width:100%!important;height:100%!important}
   #msg{font-size:13px;color:#ffb74d;min-height:18px}
   .row{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
 </style>
@@ -31,7 +32,7 @@
   </div>
   <div id="msg"></div>
 </div>
-<div id="game"></div>
+<div id="game"><div id="ejs"></div></div>
 <pre id="dbg" style="position:fixed;left:0;right:0;bottom:0;max-height:35vh;overflow:auto;margin:0;padding:6px;background:rgba(0,0,0,.75);color:#8f8;font-size:11px;z-index:99999;display:none;white-space:pre-wrap"></pre>
 
 <script>
@@ -63,7 +64,7 @@ function start(blob,name){
   $('menu').style.display='none';
   const g=$('game');g.style.display='block';
   const url=URL.createObjectURL(blob);
-  window.EJS_player='#game';
+  window.EJS_player='#ejs';
   window.EJS_core='gba';
   window.EJS_gameName=(name||'rom').replace(/\.[^.]+$/,'');
   window.EJS_gameUrl=url;
@@ -80,7 +81,7 @@ function start(blob,name){
   window.EJS_ready=()=>dbg('EJS_ready');
   window.EJS_onGameStart=()=>dbg('EJS_onGameStart');
   [3,8].forEach(t=>setTimeout(()=>{
-    const r=g.getBoundingClientRect();
+    const e=$('ejs');const r=e.getBoundingClientRect();const gr=g.getBoundingClientRect();const ec=getComputedStyle(e);dbg('t+'+t+'s #game '+Math.round(gr.width)+'x'+Math.round(gr.height)+' disp:'+getComputedStyle(g).display+' | #ejs disp:'+ec.display+' vis:'+ec.visibility+' pos:'+ec.position+' inDOM:'+document.contains(e));
     const cs=[...document.querySelectorAll('canvas')].map(c=>{const b=c.getBoundingClientRect();return c.width+'x'+c.height+' vis '+Math.round(b.width)+'x'+Math.round(b.height)+' disp:'+getComputedStyle(c).display+' op:'+getComputedStyle(c).opacity});
     dbg('t+'+t+'s game '+Math.round(r.width)+'x'+Math.round(r.height)+' hijos:'+g.children.length+' canvas:'+(cs.join(' | ')||'ninguno')+' EJS:'+(typeof window.EJS_emulator)+' '+(window.EJS_emulator&&window.EJS_emulator.started));
   },t*1000));
