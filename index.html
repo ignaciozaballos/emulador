@@ -77,6 +77,13 @@ function start(blob,name){
   s.src='https://cdn.emulatorjs.org/'+VER+'/data/loader.js';
   s.onerror=()=>{g.style.display='none';$('menu').style.display='flex';say('No se pudo cargar el emulador (CDN bloqueado). Prueba abriendo esta página fuera de la app o con otra red.');};
   document.body.appendChild(s);
+  window.EJS_ready=()=>dbg('EJS_ready');
+  window.EJS_onGameStart=()=>dbg('EJS_onGameStart');
+  [3,8].forEach(t=>setTimeout(()=>{
+    const r=g.getBoundingClientRect();
+    const cs=[...document.querySelectorAll('canvas')].map(c=>{const b=c.getBoundingClientRect();return c.width+'x'+c.height+' vis '+Math.round(b.width)+'x'+Math.round(b.height)+' disp:'+getComputedStyle(c).display+' op:'+getComputedStyle(c).opacity});
+    dbg('t+'+t+'s game '+Math.round(r.width)+'x'+Math.round(r.height)+' hijos:'+g.children.length+' canvas:'+(cs.join(' | ')||'ninguno')+' EJS:'+(typeof window.EJS_emulator)+' '+(window.EJS_emulator&&window.EJS_emulator.started));
+  },t*1000));
 }
 
 $('file').onchange=async e=>{
