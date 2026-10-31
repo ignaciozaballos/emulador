@@ -13,6 +13,9 @@
   button.sec,label.btn.sec{background:#333}
   input[type=file]{display:none}
   #game{position:fixed;top:0;left:0;width:100vw;height:100vh;height:100dvh;display:none;background:#000;overflow:hidden}
+  #ejs .ejs_menu_bar{display:none!important}
+  body.showmenu #ejs .ejs_menu_bar{display:flex!important;z-index:9998}
+  #menubtn{position:fixed;top:8px;right:8px;z-index:99998;width:40px;height:40px;padding:0;border-radius:50%;background:rgba(0,0,0,.45);color:#fff;font-size:20px;display:none;touch-action:manipulation}
   #ejs{position:absolute;top:0;left:0;width:100%;height:100%;display:block!important}
   #ejs>div,#ejs .ejs_parent{width:100%!important;height:100%!important}
   #msg{font-size:13px;color:#ffb74d;min-height:18px}
@@ -33,6 +36,7 @@
   <div id="msg"></div>
 </div>
 <div id="game"><div id="ejs"></div></div>
+<button id="menubtn" title="Menú">☰</button>
 <pre id="dbg" style="position:fixed;left:0;right:0;bottom:0;max-height:35vh;overflow:auto;margin:0;padding:6px;background:rgba(0,0,0,.75);color:#8f8;font-size:11px;z-index:99999;display:none;pointer-events:none;white-space:pre-wrap"></pre>
 
 <script>
@@ -62,7 +66,7 @@ async function refresh(){
 }
 
 function start(blob,name){
-  $('menu').style.display='none';
+  $('menu').style.display='none';$('menubtn').style.display='block';
   const g=$('game');g.style.display='block';
   const url=URL.createObjectURL(blob);
   window.EJS_player='#ejs';
@@ -73,7 +77,7 @@ function start(blob,name){
   dbg('Version emulador: '+VER+' | WebGL2: '+!!document.createElement('canvas').getContext('webgl2'));
   window.EJS_startOnLoaded=true;
   window.EJS_color='#e53935';
-  window.EJS_defaultOptions={'save-state-location':'browser'};
+  window.EJS_defaultOptions={'save-state-location':'browser','save-save-interval':'30'};
   window.EJS_threads=false;
   const s=document.createElement('script');
   s.src='https://cdn.emulatorjs.org/'+VER+'/data/loader.js';
@@ -94,6 +98,7 @@ $('file').onchange=async e=>{
   try{await put({name:f.name,blob:f});}catch(err){say('No se pudo guardar la ROM (se usará solo esta sesión).');}
   start(f,f.name);
 };
+$('menubtn').onclick=()=>document.body.classList.toggle('showmenu');
 $('play').onclick=()=>start(saved.blob,saved.name);
 $('forget').onclick=async()=>{await del();saved=null;$('info').textContent='ROM olvidada. Elige una nueva.';$('play').style.display='none';$('forget').style.display='none';};
 refresh();
