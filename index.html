@@ -33,16 +33,17 @@
   <div id="msg"></div>
 </div>
 <div id="game"><div id="ejs"></div></div>
-<pre id="dbg" style="position:fixed;left:0;right:0;bottom:0;max-height:35vh;overflow:auto;margin:0;padding:6px;background:rgba(0,0,0,.75);color:#8f8;font-size:11px;z-index:99999;display:none;white-space:pre-wrap"></pre>
+<pre id="dbg" style="position:fixed;left:0;right:0;bottom:0;max-height:35vh;overflow:auto;margin:0;padding:6px;background:rgba(0,0,0,.75);color:#8f8;font-size:11px;z-index:99999;display:none;pointer-events:none;white-space:pre-wrap"></pre>
 
 <script>
 const DB='gba-rom-store', STORE='roms', KEY='current';
 const $=id=>document.getElementById(id);
-const dbg=t=>{const d=$('dbg');d.style.display='block';d.textContent+=t+'\n';d.scrollTop=1e9;};
+const H=location.hash.replace('#','');const DEBUG=H.includes('debug');
+const dbg=t=>{if(!DEBUG)return;const d=$('dbg');d.style.display='block';d.textContent+=t+'\n';d.scrollTop=1e9;};
 window.addEventListener('error',e=>dbg('ERR: '+e.message));
 window.addEventListener('unhandledrejection',e=>dbg('REJ: '+(e.reason&&e.reason.message||e.reason)));
 ['error','warn'].forEach(k=>{const o=console[k];console[k]=(...a)=>{try{dbg(k+': '+a.map(x=>String(x&&x.message||x)).join(' ').slice(0,300));}catch(_){}o.apply(console,a);};});
-const VER=(location.hash.replace('#','')||'stable');
+const VER=(H.replace('debug','').replace(/[^a-z0-9.]/g,'')||'stable');
 const say=t=>$('msg').textContent=t||'';
 
 function idb(){return new Promise((res,rej)=>{const r=indexedDB.open(DB,1);
